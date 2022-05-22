@@ -1,0 +1,134 @@
+const data = {
+  books: [
+    { id: 'b1',
+      title: 'Coders at Work',
+      price: 2434,
+      authorId: 'a2' },
+    { id: 'b2',
+      title: 'Essays on Software Engineering',
+      price: 2399,
+      authorId: 'a3' },
+    { id: 'b3',
+      title: 'Web Usability',
+      price: 2250,
+      authorId: 'a4' },
+    { id: 'b4',
+      title: 'Clean Code',
+      price: 3224,
+      authorId: 'a1' },
+  ],
+  authors: [
+    { id: 'a1', firstName: 'Robert', lastName: 'Martin' },
+    { id: 'a2', firstName: 'Peter', lastName: 'Seibel' },
+    { id: 'a3', firstName: 'Frederick', lastName: 'Brooks' },
+    { id: 'a4', firstName: 'Steve', lastName: 'Krug' },
+  ]
+};
+
+
+let myArray = {0:'',1:'',2:'',3:''};
+
+
+//this function is to change an array into an object
+function mapIntoObject(arr) {
+  return arr.reduce(function(acc, curr) {
+    	acc[arr.indexOf(curr)] = curr;
+    	return acc;
+    }, {});
+}
+
+console.log(mapIntoObject(data.books))
+
+function mapIntoObjectTwo(arr) {
+  return arr.reduce(function(acc, curr) {
+    	acc[arr.indexOf(curr)] = curr;
+    	return acc;
+    }, []); //nothing will change using [] instead of {}
+}
+
+console.log(mapIntoObjectTwo(data.books)) //notice how nothing changes
+
+function assign(object, source) {
+  Object.keys(source).forEach(function(key) { //
+    object[key] = source[key];
+  });
+  console.log(object);
+}
+
+assign(myArray, data.books); // assign firstObject properties to secondObject
+
+
+Output:
+
+{
+  0: {
+    authorId: "a2",
+    id: "b1",
+    price: 2434,
+    title: "Coders at Work"
+  },
+  1: {
+    authorId: "a3",
+    id: "b2",
+    price: 2399,
+    title: "Essays on Software Engineering"
+  },
+  2: {
+    authorId: "a4",
+    id: "b3",
+    price: 2250,
+    title: "Web Usability"
+  },
+  3: {
+    authorId: "a1",
+    id: "b4",
+    price: 3224,
+    title: "Clean Code"
+  }
+}
+[{
+  authorId: "a2",
+  id: "b1",
+  price: 2434,
+  title: "Coders at Work"
+}, {
+  authorId: "a3",
+  id: "b2",
+  price: 2399,
+  title: "Essays on Software Engineering"
+}, {
+  authorId: "a4",
+  id: "b3",
+  price: 2250,
+  title: "Web Usability"
+}, {
+  authorId: "a1",
+  id: "b4",
+  price: 3224,
+  title: "Clean Code"
+}]
+{
+  0: {
+    authorId: "a2",
+    id: "b1",
+    price: 2434,
+    title: "Coders at Work"
+  },
+  1: {
+    authorId: "a3",
+    id: "b2",
+    price: 2399,
+    title: "Essays on Software Engineering"
+  },
+  2: {
+    authorId: "a4",
+    id: "b3",
+    price: 2250,
+    title: "Web Usability"
+  },
+  3: {
+    authorId: "a1",
+    id: "b4",
+    price: 3224,
+    title: "Clean Code"
+  }
