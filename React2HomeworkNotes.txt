@@ -1,0 +1,514 @@
+Virtual DOM used to reconcile actual DOM
+allowed developers to declaratively describe UIs
+and manage actions on their state instead of actions
+on their DOM elements. user interface "outcomes".
+Instead of coming up with steps to describe actions
+on interfaces, developers just describe the interface
+in terms of a "final" state (like a function). 
+When actions happen to that state, React takes care 
+of updating the UIs in the DOM based on that.
+
+What does it mean by describe actions on interfaces?
+When a component updates, the instance stays 
+the same, so that state is maintained across 
+renders. React updates the props of the underlying 
+component instance to match the new element, and 
+calls UNSAFE_componentWillReceiveProps(), 
+UNSAFE_componentWillUpdate() and componentDidUpdate() 
+on the underlying instance.
+
+Next, the render() method is called and the diff 
+algorithm recurses on the previous result and 
+the new result.
+
+key attribute to fix the problem of lists
+helps in converting between two trees
+
+In practice, finding a key is usually not hard. The element you are going to display may already have a unique ID, so the key can just come from your data:
+
+<li key={item.id}>{item.name}</li>
+
+
+HTML "tag" for DOM element to represent
+null as second argument of React.createElement if
+there are no attributes.
+3rd argument content of the DOM element
+
+Although the whole React rendering code is 
+within the ticking timer, React is changing 
+only the content of the pre element and not the 
+whole DOM tree.
+I guess this makes sense since React compares the
+two versions and only updates what changed.
+
+In React, we describe UIs using components that 
+are reusable, composable, and stateful.
+
+function Button (props) {
+  // Returns a DOM/React element here. For example:
+  return <input type="submit" {...props.label}/>;
+}
+
+// To render a Button element in the browser
+ReactDOM.render(<Button label="Save" />, mountNode);
+
+function Button (props) {
+  return React.createElement(
+    "button",
+    { type: "submit" },
+    props.label
+  );
+}
+
+ReactDOM.render(
+  React.createElement(Button, { label: "Save"}),
+  mountNode
+);
+
+A compiler that translates one form of syntax 
+into another is known as a "transpiler". To 
+translate JSX we can use transpilers like Babel 
+or TypeScript. 
+
+A React component has to start with a capital letter
+otherwise it will render blank
+
+In React, the list of attributes received by a React
+element is known as props. A React function component
+receives this list as its first argument. The list is
+passed as an object with keys representing the attributes
+names and values representing the values assigned 
+to them.
+
+outputs green or red text half of the time
+class ConditionalStyle extends React.Component {
+  render() {
+    return (
+      <div style={{ color: Math.random() < 0.5 ? 'green': 'red' }}>
+        How do you like this?
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <ConditionalStyle />,
+  mountNode,
+);
+
+css style attribute inline two curly braces
+
+When an HTML template is used, the library parses 
+your application as a string. 
+A React application is parsed as a tree of objects.
+We use JSX
+<ul>
+  {todos.map(todo =>
+    <li>{todo.body}</li>
+  )}
+</ul>
+Which, before being used in the browser, gets translated to:
+React.createElement(
+  "ul",
+  null,
+  todos.map(todo =>
+    React.createElement("li", null, todo.body)
+  ),
+);
+
+-----------------------------------------------------
+const SearchEngines = () => {
+  return (
+    <div className="search-engines">
+      <ClickableImage href="http://google.com" src="google.png" />
+      <ClickableImage href="http://bing.com" src="bing.png" />
+    </div>
+  );
+};
+Note how I used the ClickableImage component to compose the SearchEngines component!
+We can also make the SearchEngines component reusable as well by extracting its data into a variable and designing it to work with that variable.
+For example, we can introduce a data array in a format like:
+const data = [
+  { href: "http://google.com", src: "google.png" },
+  { href: "http://bing.com", src: "bing.png" },
+  { href: "http://yahoo.com", src: "yahoo.png" }
+];
+Then, to make <SearchEngines data={data} /> work, we just map the data array from a list of objects into a list of ClickableImage components:
+const SearchEngines = ({ engines }) => {
+  return (
+    <List>
+      {engines.map(engine => <ClickableImage {...engine} />)}
+    </List>
+  );
+};
+
+ReactDOM.render(
+ <SearchEngines engines={data} />,
+ document.getElementById("mountNode")
+);
+This SearchEngines can work with any list of search engines we give to it.
+------------------------------------------------------------
+All hooks begin with the word "use"
+A hook is a call to a special function
+". Some of them can be used to provide a function component with stateful 
+elements (like useState), others can be used to managed
+side effects (like useEffect) or to cache/memoize 
+functions and objects (like useCallback). 
+Every time you define a variable in your code you 
+will be introducing a state and every time you change
+the value of that variable you are mutating that state.
+Keep that in mind.
+----------------------------------------------------
+Using onClick in React
+const Button = () => {
+  let count = 0;
+
+  return (
+    <button onClick={() => console.log('Button clicked')}>
+      {count}
+    </button>
+  );
+};
+
+ReactDOM.render(<Button />, mountNode);
+Unlike the DOM version of the onClick attribute (which uses a string) the React’s onClick attribute uses a function reference. You specify that inside curly brackets.
+function func() {}
+
+<button onClick={func} />
+Note how we passed the func reference (name) as the onClick handler. We did not invoke func in there. React will invoke func when the button gets clicked.
+--------------------------------------------------
+To track state updates and trigger virtual 
+DOM diffing and real DOM reconciliation, React 
+needs to be aware of any changes that happen to 
+any state elements that are used within 
+components. To do this in an efficient way, 
+React requires the use of special getters and 
+setters for each state element you introduce in 
+a component. This is where the useState hook 
+comes into play. It defines a state element 
+and give us back a getter and setter for it!
+
+The useState function returns an array with 
+exactly 2 items. The first item is a value 
+(getter) and the second item is a function (setter)
+
+const [count, setCount] = React.useState(0);
+	   ^		  ^
+   getter(value)	setter(function)
+
+first argument of React.useState is initial value
+of the state element.
+-----------------------------------------------
+
+This is probably what my group did in the ecommerce
+site to add to the cart
+
+const Button = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      {count}
+    </button>
+  );
+};
+
+ReactDOM.render(<Button />, mountNode);
+-----------------------------------------------
+Our code didn't do any DOM updates to the UI itself
+but React did. We changed the Javascript object
+in memory. I think that's why when you reload the
+count changes back to 0.
+
+-------------------------------------------------
+Something I'm pretty sure I already knew but copied
+and pasted anyways
+
+The useState function is available globally in the jsComplete playground. This is just an alias to React.useState. In your code, you can use named imports to have useState available directly in the scope of a module:
+import React, { useState } from 'react';
+-------------------------------------------------
+Now they are going to have many buttons but make
+all of them increment a single shared count value
+If I click on one the other button's count 
+*************IMPORTANT*************
+Remember setCount is already an established function
+by useState.
+starts where the last one left off
+-------------------------------------------------
+I thought the following section was important to note
+--------------------------------------------------
+Option #1
+ReactDOM.render([<Button />, <Display />], mountNode);
+This is usually a good solution when all the elements you’re rendering are coming from a dynamic source. However, it’s not ideal for the case we’re doing here.
+Another option is to make the sibling React elements the children of another React element. For example, we can just enclose them in a div element.
+Option #2
+ReactDOM.render(
+  <div>
+    <Button />
+    <Display />
+  </div>,
+  mountNode
+);
+The React API supports this nesting. In fact, React has a special object if you need to enclose multiple adjacent elements like this without introducing a new DOM parent node. You can use React.Fragment:
+Option #3
+ReactDOM.render(
+  <React.Fragment>
+    <Button />
+    <Display />
+  </React.Fragment>,
+  mountNode
+);
+This case is so common in React that the JSX extension has a shortcut for it. Instead of typing React.Fragment, you can just use an empty tag <></>.
+Option #3+
+ReactDOM.render(
+  <>
+    <Button />
+    <Display />
+  </>,
+  mountNode
+);
+The empty tag will get transpiled into the React.Fragment syntax. I’ll use this syntax to continue with the example.
+However, you should always try to make the first argument to ReactDOM.render a single component call instead of the nested tree that we just did. This is essentially a code quality preference. It forces you into thinking about your components hierarchy, names, and relations. Let’s do that next.
+-----------------------------------------------
+Also, I just found out what React.Fragment was
+for
+-----------------------------------------------
+Let's digest the section below slowly
+----
+By moving the state to CountManager, we can now 
+"flow" data from parent to child using 
+component props. That’s what we should do to 
+display the count value in the Display component:
+
+const Display = ({ content }) => (
+  <pre>{content}</pre>
+); 
+
+const Button = ({ clickAction }) => {
+  return (
+    <button onClick={clickAction}>
+      +1
+    </button>//notice how you don't have to put
+  );         //props. We can put {clickAction}
+};		  //industry standard is props I guess
+		  //it helps to be descriptive so maybe
+		  //I'm mistaken
+
+const CountManager = () => {
+  const [count, setCount] = useState(0);
+    const incrementCounter = () => {
+    setCount(count + 1);
+  }
+
+ReactDOM.render(<CountManager />, mountNode);
+
+  return (
+    <>
+      <Button clickAction={incrementCounter}/>
+      <Display content={count} />
+    </>  
+  );
+};
+
+ReactDOM.render(<CountManager />, mountNode);
+-------------------------------------------------
+//first step in changing functionality
+const Display = ({ content }) => (
+  <pre>{content}</pre>
+);
+
+const Button = ({ clickAction, clickNumber}) => {
+  return (
+    <button onClick={clickAction}>
+      {clickNumber}
+    </button>
+  );
+};
+
+const CountManager = () => {
+  const [count, setCount] = useState(0);
+
+  const incrementCounter = () =>
+    setCount(count + 1);
+
+  return (
+    <div>
+      <Button clickAction={incrementCounter} clickNumber={1}/> {/* +1 */}
+      <Button clickAction={incrementCounter} clickNumber={5}/> {/* +5 */}
+      <Button clickAction={incrementCounter} clickNumber={10}/> {/* +10 */}
+      <Display content={count} />
+    </div>
+  );
+}
+
+ReactDOM.render(<CountManager />, mountNode);
+-------------------------------------------------
+//2nd step in changing application
+const Display = ({ content }) => (
+  <pre>{content}</pre>
+);
+
+const Button = ({ clickAction, clickNumber }) => {
+  return (
+    <button onClick={() => clickAction(clickNumber)}>
+      +{clickNumber} //notice an arrow fucntion
+    </button>	    //this was needed to bind
+  );    		    //the clickAction prop to     
+};			    //the Button's clickValue
+
+const CountManager = () => {
+  const [count, setCount] = useState(0);
+
+  const incrementCounter = incrementNumber =>
+    setCount(count + incrementNumber);
+//incrementNumber is clickAction thanks to binding
+//incrementCounter(clickAction) 
+ return (
+    <div>
+      <Button clickAction={incrementCounter} clickNumber={1}/> {/* +1 */}
+      <Button clickAction={incrementCounter} clickNumber={5}/> {/* +5 */}
+      <Button clickAction={incrementCounter} clickNumber={10}/> {/* +10 */}
+      <Display content={count} />
+    </div>
+  );
+}
+
+ReactDOM.render(<CountManager />, mountNode);
+------------------------------------------------
+Accepting User Input Section:
+As the user types, the rendered UI changes through
+the browser's own state management. We did not
+instruct React to change the UI based on the value
+of the textarea element. 
+
+Two methods:
+
+DOM API (X)
+React ref (Checkmark)
+
+React ref Three methods: 
+
+Method #1
+If React renders an element we can actually do 
+the element selection through React itself. React
+has a special "ref" attribute that we can assign
+to each DOM element and later use it to access it.
+
+Method #2
+We can also access the element through the onChange 
+event’s target object directly. Each event exposes 
+its target and in the case of an onChange event on 
+a textarea the target is the textarea element.
+
+***[Note to self: 
+			Remember ~
+event.target is the element where the event originally
+occurred.
+event.currentTarget is the element running the event
+handler (this!)]***
+---------------------------------------------------------
+const CharacterCounter = () => {
+  const [count, setCount] = useState(0);
+  
+  const handleChange = (event) => {
+    const element = event.target;
+    setCount(element.value.length); //setCount is written in the
+  };					        //handleChange function
+						  //this seems much like the
+						  //onClick except OnClick did
+						  //it indirectly
+  
+  return (
+    <div>
+      <textarea cols={80} rows={10} onChange={handleChange} />
+      <div>Count: {count}</div>
+    </div>
+  );
+};
+
+ReactDOM.render(<CharacterCounter />, mountNode);
+----------------------------------------------------------
+
+Method #3 (ideal ~ Checkmark)
+The handleChange event has the side effect of calling the setCount 
+function and computing the length of the text. This is really not 
+the concern of an event handler.
+
+The reason we needed to mix these concerns is that React is not aware 
+of what is being typed. It’s a DOM change, not a React change.
+
+So Method #3...(Method #3 makes the code more reusable for handleChange
+you wouldn't need don't length everytime you are dealing with textarea 
+element so therefore more reusable, React is also now aware of the input
+value state rather than the length. React can now do more with this info
+in case there are other things we want to implement)
+Makes it into a React change by overriding the value of textarea and 
+updating it through React as a state change. In the onChange handler, 
+instead of counting the characters we just set the value of what has 
+been typed on the state of the component. Then 
+the concern of what to do with that value becomes part of the React 
+UI render logic. Here’s a version of the solution that uses this 
+strategy:
+
+***[Note to self: 
+			Remember ~
+event.target is the element where the event originally
+occurred.
+event.currentTarget is the element running the event
+handler (this!)]***
+--------------------------------------------------------------------
+const CharacterCounter = () => {
+  const [inputValue, setInputValue] = useState('');
+  
+  const handleChange = (event) => {
+    const element = event.target;
+    setInputValue(element.value);
+  };
+  
+  return (
+    <div>
+      <textarea cols={80} rows={10} value={inputValue} onChange={handleChange} />
+      <div>Count: {inputValue.length}</div>
+    </div>
+  );
+};
+
+ReactDOM.render(<CharacterCounter />, mountNode);
+--------------------------------------------------------------------
+Last Section (copied and pasted no code example)
+Managing side effects
+Rendering a React component in the browser for the first time is referred to as "mounting" and removing it from the browser 
+is referred to as "unmounting".
+
+Mounting, updating, and unmounting components might need to have a "side effect". For example, a React TODOs app might need 
+to display the number of active TODO items in the title of the browser page. This is not something you can do directly with 
+the React API. You need to use the DOM API for it. Similarly, when rendering an input form you might want to auto-focus a text 
+box. That too has to be done with the DOM API.
+
+Side effects usually need to happen either before or after React’s render task. This is why React provides "lifecycle methods" 
+in class components to let you perform custom operations before or after the render method. You can do things after a component 
+is first mounted inside a componentDidMount class method, you can do things after a components gets an update inside a componentDidUpdate 
+class method, and you can do things right before a component is removed from the browser inside a componentWillUnmount class method.
+
+For function components, side effects are managed using the React.useEffect hook function, which takes 2 arguments: a callback function 
+and an array of dependencies.
+
+useEffect(() => {
+  // Do something after each render
+  // but only if dep1 or dep2 changed
+}, [dep1, dep2]);
+The first time React renders a component that has a useEffect call it’ll invoke its callback function. After each new render of that 
+component, if the values of the dependencies are different from what they used to be in the previous render, React will invoke the 
+callback function again.
+
+When a function component is updated or unmounted, React can invoke a side effect "cleanup" function. That cleanup function can be 
+returned from the useEffect callback function.
+Side effects methods are also very handy for analyzing what is going on in the application and for further optimizing the performance 
+of React updates.
+
+
+
+
+
+
+
